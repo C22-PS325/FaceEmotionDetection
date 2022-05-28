@@ -46,10 +46,10 @@ val_gen = data_val.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\T
                           
 from keras.applications.vgg16 import VGG16
 
-base_model = VGG16(
+model = VGG16(
         weights=None,
         include_top=False,
         input_shape=img_size
     )
 
-base_model.summary()
+model.summary()
