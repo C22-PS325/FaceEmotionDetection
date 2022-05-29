@@ -27,7 +27,6 @@ data_train = ImageDataGenerator(horizontal_flip=True)
                           
 train_gen = data_train.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\Training\",
                                                     target_size=(img_size,img_size),
-                                                    color_mode="rgb",
                                                     batch_size=batch_size,
                                                     class_mode='categorical',
                                                     shuffle=True)
@@ -35,7 +34,6 @@ train_gen = data_train.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gamb
 data_val = ImageDataGenerator(horizontal_flip=True)
 val_gen = data_val.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\Testing\",
                                                     target_size=(img_size,img_size),
-                                                    color_mode="rgb",
                                                     batch_size=batch_size,
                                                     class_mode='categorical',
                                                     shuffle=False)
@@ -45,13 +43,13 @@ val_gen = data_val.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\T
 #Model Building VGG16 is a convolution neural net (CNN ) architecture which was used to win ILSVR(Imagenet) competition in 2014. It is considered to be one of the excellent vision model architecture till date. Most unique thing about VGG16 is that instead of having a large number of hyper-parameter they focused on having convolution layers of 3x3 filter with a stride 1 and always used same padding and maxpool layer of 2x2 filter of stride 2. It follows this arrangement of convolution and max pool layers consistently throughout the whole architecture. In the end it has 2 FC(fully connected layers) followed by a softmax for output. The 16 in VGG16 refers to it has 16 layers that have weights. This network is a pretty large network and it has about 138 million (approx) parameters.          
 from keras.applications.vgg16 import VGG16
 
-base_model = VGG16(
+model = VGG16(
         weights=None,
         include_top=False,
         input_shape=img_size
     )
 
-base_model.summary()
+model.summary()
                           
                           
 X_train, y_train, train_labels = load_data(TRAIN_DIR, img_size)
