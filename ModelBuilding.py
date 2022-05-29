@@ -7,11 +7,10 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 #Untuk menampilkan hasil versi Tenserflow 
 print("Tensorflow version:", tf.__version__)
 
-#Untuk ekstraksi zip file
-import zipfile
-with zipfile.ZipFile("D:\BANGKIT\FaceEmotionDetection\gambar\gambar.zip", 'r') as zip_ref:
-     zip_ref.extractall("D:\BANGKIT\FaceEmotionDetection\gambar\gambar.zip")
-        
+
+TRAIN_DIR = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Training/Training/')
+TEST_DIR = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Testing/Testing/')
+
 #Untuk menmapilkan jumlah gambar dari tiap kategori
 for emotion in os.listdir("D:\BANGKIT\FaceEmotionDetection\gambar\Training\"):
     print(str(len(os.listdir("D:\BANGKIT\FaceEmotionDetection\gambar\Training\ " + emotion))) + " " + emotion + " images")
@@ -24,7 +23,7 @@ batch_size = 64
 #melakukan normalisasi dengan menggunakan fungsi ImageDataGenerator
 data_train = ImageDataGenerator(horizontal_flip=True)
 
-                          
+#metode ini mengambil jalur direktori dan menghasilkan batch data yang ditambah                        
 train_gen = data_train.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\Training\",
                                                     target_size=(img_size,img_size),
                                                     batch_size=batch_size,
@@ -38,9 +37,10 @@ val_gen = data_val.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\T
                                                     class_mode='categorical',
                                                     shuffle=False)
                           
+ 
+########### CNN Model ############# 
+#Model Building VGG16 adalah arsitektur convolution neural net (CNN ) yang digunakan untuk memenangkan kompetisi ILSVR(Imagenet) pada tahun 2014. Ini dianggap sebagai salah satu arsitektur model visi yang sangat baik hingga saat ini. Hal yang paling unik tentang VGG16 adalah bahwa alih-alih memiliki sejumlah besar hyper-parameter, mereka berfokus pada memiliki lapisan konvolusi filter 3x3 dengan langkah 1 dan selalu menggunakan lapisan padding dan maxpool yang sama dari filter 2x2 langkah 2. Ini mengikuti pengaturan ini convolution dan max pool layer secara konsisten di seluruh arsitektur. Pada akhirnya memiliki 2 FC (lapisan yang terhubung penuh) diikuti oleh softmax untuk output. 16 di VGG16 mengacu pada itu memiliki 16 lapisan yang memiliki bobot. Jaringan ini adalah jaringan yang cukup besar dan memiliki sekitar 138 juta (perkiraan) parameter.
 
-                          
-#Model Building VGG16 is a convolution neural net (CNN ) architecture which was used to win ILSVR(Imagenet) competition in 2014. It is considered to be one of the excellent vision model architecture till date. Most unique thing about VGG16 is that instead of having a large number of hyper-parameter they focused on having convolution layers of 3x3 filter with a stride 1 and always used same padding and maxpool layer of 2x2 filter of stride 2. It follows this arrangement of convolution and max pool layers consistently throughout the whole architecture. In the end it has 2 FC(fully connected layers) followed by a softmax for output. The 16 in VGG16 refers to it has 16 layers that have weights. This network is a pretty large network and it has about 138 million (approx) parameters.          
 from keras.applications.vgg16 import VGG16
 
 model = VGG16(
@@ -77,3 +77,4 @@ for i in range(10):  # 10 images
     plt.title("Predicted Class: {} {} Actual Class: {}".format(pred_class,'\n',actual_class))
     plt.show()
     pass
+
