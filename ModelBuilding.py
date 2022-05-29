@@ -17,7 +17,7 @@ for emotion in os.listdir("D:\BANGKIT\FaceEmotionDetection\gambar\Training\"):
     
 
 #Menentukan gambar Weight, Height , color     
-img_size =  (48,48,3)
+img_size =  (48,48,1)
 batch_size = 64
 
 #melakukan normalisasi dengan menggunakan fungsi ImageDataGenerator
