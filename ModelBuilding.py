@@ -8,8 +8,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 print("Tensorflow version:", tf.__version__)
 
 
-TRAIN_DIR = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Training/Training/')
-TEST_DIR = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Testing/Testing/')
+train_path = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Training/Training/')
+test_path = ('/content/drive/MyDrive/Colab Notebooks/Bangkit/gambar/Testing/Testing/')
 
 #Untuk menmapilkan jumlah gambar dari tiap kategori
 for emotion in os.listdir("D:\BANGKIT\FaceEmotionDetection\gambar\Training\"):
@@ -43,17 +43,67 @@ val_gen = data_val.flow_from_directory("D:\BANGKIT\FaceEmotionDetection\gambar\T
 
 from keras.applications.vgg16 import VGG16
 
-model = VGG16(
+my_model = VGG16(
         weights=None,
         include_top=False,
         input_shape=img_size
     )
 
-model.summary()
+my_model.summary()
+
+CLASSES = 6
+
+model = Sequential()
+model.add(my_model)
+model.add(Flatten())
+model.add(Dense(1000, activation="relu"))
+model.add(Dropout(0.4))
+model.add(Dense(CLASSES, activation="softmax"))
+                          
+from tensorflow.keras.optimizers import RMSprop
+def deep_model(model, X_train, Y_train, epochs, batch_size):
+   
+    model.compile(
+    loss='binary_crossentropy',
+    optimizer=RMSprop(learning_rate=1e-4),
+    metrics=['accuracy'])
+    
+    history = model.fit(X_train
+                       , Y_train
+                       , epochs=epochs
+                       , batch_size=batch_size
+                       , verbose=1)
+    return history
+
+from tqdm import tqdm
+import cv2
+import numpy
+def load_data(dir_path, img_size):
+   
+    X = []
+    y = []
+    i = 0
+    labels = dict()
+    for path in tqdm(sorted(os.listdir(dir_path))):
+        if not path.startswith('.'):
+            labels[i] = path
+            for file in os.listdir(dir_path + path):
+                if not file.startswith('.'):
+                    gmbr = cv2.imread(dir_path + path + '/' + file)
+                    gmbr = gmbr.astype('float32') / 255
+                    resized = cv2.resize(gmbr, img_size,  interpolation = cv2.INTER_AREA)
+                    X.append(resized)
+                    y.append(i)
+            i += 1
+    X = np.array(X)
+    y = np.array(y)
+    print(f'{len(X)} images loaded from {dir_path} directory.')
+    return X, y, labels
                           
                           
-X_train, y_train, train_labels = load_data(TRAIN_DIR, img_size)
-X_test, y_test, test_labels = load_data(TEST_DIR,img_size)
+                          
+X_train, y_train, train_labels = load_data(train_path, img_size)
+X_test, y_test, test_labels = load_data(test_path,img_size)
                           
 epochs = 40
 batch_size = 64
@@ -63,14 +113,14 @@ history = deep_model(model, X_train, Y_train, epochs, batch_size)
 #Menampilkan Hasil prediksi emotion                           
 from random import randint
 
-l = len(filenames)
-base_path = TEST_DIR
+l = len(namafiles)
+base_path = test_path
 for i in range(10):  # 10 images
     
     rnd_number = randint(0,l-1)
-    filename,pred_class,actual_class = pred_result.loc[rnd_number]
+    namafile,pred_class,actual_class = pred_result.loc[rnd_number]
     
-    img_path = os.path.join(base_path,filename)
+    img_path = os.path.join(base_path,namafile)
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     plt.imshow(img)
