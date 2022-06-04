@@ -3,7 +3,9 @@ import os
 import tensorflow as tf
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
+from tensorflow.keras.layers import Dense, Input, Dropout,Flatten, Conv2D
+from tensorflow.keras.layers import BatchNormalization, Activation, MaxPooling2D
+from tensorflow.keras.models import Model, Sequentia
 #Untuk menampilkan hasil versi Tenserflow 
 print("Tensorflow version:", tf.__version__)
 
@@ -100,31 +102,26 @@ def load_data(dir_path, img_size):
     print(f'{len(X)} images loaded from {dir_path} directory.')
     return X, y, labels
                           
-                          
+
+
                           
 X_train, y_train, train_labels = load_data(train_path, img_size)
+
+train_labels
+
 X_test, y_test, test_labels = load_data(test_path,img_size)
+                          
+from keras.utils.np_utils import to_categorical
+
+Y_train = to_categorical(y_train, num_classes=6)
+Y_train.shape
+                
+                          
+Y_test = to_categorical(y_test, num_classes=6)
+Y_test.shape
                           
 epochs = 40
 batch_size = 64
 
 history = deep_model(model, X_train, Y_train, epochs, batch_size)
                           
-#Menampilkan Hasil prediksi emotion                           
-from random import randint
-
-l = len(namafiles)
-base_path = test_path
-for i in range(10):  # 10 images
-    
-    rnd_number = randint(0,l-1)
-    namafile,pred_class,actual_class = pred_result.loc[rnd_number]
-    
-    img_path = os.path.join(base_path,namafile)
-    img = cv2.imread(img_path)
-    img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    plt.imshow(img)
-    plt.title("Predicted Class: {} {} Actual Class: {}".format(pred_class,'\n',actual_class))
-    plt.show()
-    pass
-
