@@ -45,4 +45,19 @@ validation_generator = validation_datagen.flow_from_directory(TEST_DIR,
                                                              class_mode='categorical')
 
 ########MODELING PART##########
-from keras.applications.efficientnet_v2 import EfficientNetV2B1, preprocess_input
+from keras.applications.mobilenet_v2 import MobileNetV2
+
+# modelling
+size = (128,128,3)
+
+base_model=MobileNetV2(input_shape = size,weights="imagenet",include_top=False)
+x = base_model.output
+x = layers.GlobalAveragePooling2D()(x)
+# let's add a fully-connected layer
+x = layers.Dropout(0.5)(x)
+x = layers.Dense(256, activation='relu')(x)
+# and a logistic layer -- let's say we have 200 classes
+predictions = layers.Dense(7, activation='softmax')(x)
+
+# this is the model we will train
+model = tf.keras.models.Model(inputs=base_model.input, outputs=predictions)
