@@ -34,7 +34,7 @@ train_generator = ImageDataGenerator(rotation_range=15,
 
 
 
-#Building model with EffienNetB0 This function returns a Keras image classification model, 
+#Building Transfer learning model with EffienNetB0 This function returns a Keras image classification model, 
 #optionally loaded with weights pre-trained on ImageNet.
 
 
